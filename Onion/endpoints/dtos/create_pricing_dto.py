@@ -1,7 +1,5 @@
 from pydantic import BaseModel
 
-
-class CreateMovieDto(BaseModel):
+class CreatePricingDto(BaseModel):
     name: str
-    description: str
-    imdb_url: str
+    price: float

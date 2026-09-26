@@ -1,21 +1,39 @@
 from contextlib import AbstractContextManager
 from typing import List, Callable
 
-from injector import Module, provider, singleton, multiprovider
+from injector import Binder, Module, provider, singleton, multiprovider
 from sqlalchemy.orm import Session
 
+from core.interfaces.movie_repository import IMovieRepository
+from core.interfaces.pricing_repository import IPricingRepository
+from core.interfaces.sms_gateway import ISmsGateway
+from core.interfaces.subscription_repository import ISubscriptionRepository
+from core.interfaces.user_repository import IUserRepository
 from database.database import Database
 from database.mappings.mapping import Mapping
 from database.mappings.movie_mapping import MovieMapping
 from database.mappings.pricing_mapping import PricingMapping
 from database.mappings.subscription_mapping import SubscriptionMapping
 from database.mappings.user_mapping import UserMapping
+from database.repositories.movie_repository import MovieRepository
+from database.repositories.pricing_repository import PricingRepository
+from database.repositories.subscription_repository import SubscriptionRepository
+from database.repositories.user_repository import UserRepository
+from external.twilio_gateway_fake import TwilioGatewayFake
 from infrastructure.settings import Settings
 
 
 class AppModule(Module):
     def __init__(self, settings: Settings):
         self.__settings = settings
+
+    def configure(self, binder: Binder) -> None:
+        # Bind each Core interface to its concrete implementation
+        binder.bind(IMovieRepository, to=MovieRepository)
+        binder.bind(IPricingRepository, to=PricingRepository)
+        binder.bind(IUserRepository, to=UserRepository)
+        binder.bind(ISubscriptionRepository, to=SubscriptionRepository)
+        binder.bind(ISmsGateway, to=TwilioGatewayFake)
 
     @provider
     @singleton
