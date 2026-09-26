@@ -3,10 +3,12 @@ from typing import Callable
 
 from injector import inject
 from sqlalchemy.orm import Session
-from models.pricing import Pricing
+
+from core.interfaces.pricing_repository import IPricingRepository
+from core.models.pricing import Pricing
 
 
-class PricingRepository:
+class PricingRepository(IPricingRepository):
     @inject
     def __init__(self, session_factory: Callable[..., AbstractContextManager[Session]]):
         self.__session_factory = session_factory
